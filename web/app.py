@@ -27,9 +27,19 @@ WS_BASE_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss:
 # --- Responsive CSS ---
 st.markdown("""
 <style>
-    /* ---- Hide Streamlit default UI clutter ---- */
+    /* ---- Hide Streamlit default UI clutter ----
+       NOTE: We keep stHeader visible (just transparent) because on mobile the
+       sidebar hamburger toggle lives INSIDE stHeader. Hiding the header would
+       remove the only way to open the sidebar on phones. */
     #MainMenu { visibility: hidden; }
-    header[data-testid="stHeader"] { display: none; }
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        height: 0 !important;
+    }
+    /* Re-show the toolbar/decoration that lives inside header so the toggle
+       remains clickable, but hide the deploy/menu chrome on the right. */
+    header[data-testid="stHeader"] [data-testid="stToolbar"] { display: none !important; }
+    header[data-testid="stHeader"] [data-testid="stDecoration"] { display: none !important; }
     footer { visibility: hidden; }
 
     /* ---- Sidebar collapse/expand toggle button (always visible) ---- */
@@ -162,11 +172,28 @@ COOKIE_NAME = "ta_session"
 
 
 cookie_manager = stx.CookieManager(key="ta_cookie_mgr")
-# IMPORTANT: must call get_all() once to populate the cookie cache
-all_cookies = cookie_manager.get_all(key="ta_get_all")
+# IMPORTANT: get_all() must be called once per run to populate the cookie cache,
+# but on the FIRST render after a hard refresh the JS component hasn't sent
+# cookies back yet — it returns {} and we'd wrongly think the user is logged out.
+# Workaround: if we get an empty dict on first render, force one extra rerun so
+# the component has a chance to deliver cookies before we make the auth decision.
+all_cookies = cookie_manager.get_all(key="ta_get_all") or {}
+
+if "_cookie_ready" not in st.session_state:
+    st.session_state._cookie_ready = False
+
+# If cookies are present we're definitely ready. If empty, give the component
+# one rerun cycle to settle (only once, to avoid infinite reload loops).
+if all_cookies:
+    st.session_state._cookie_ready = True
+elif not st.session_state._cookie_ready:
+    st.session_state._cookie_ready = True  # mark so we only retry once
+    import time
+    time.sleep(0.25)
+    st.rerun()
 
 if "authenticated" not in st.session_state:
-    cookie_val = all_cookies.get(COOKIE_NAME) if all_cookies else None
+    cookie_val = all_cookies.get(COOKIE_NAME)
     st.session_state.authenticated = (cookie_val == SESSION_TOKEN)
 
 if not st.session_state.authenticated:
