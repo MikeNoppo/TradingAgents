@@ -27,8 +27,14 @@ st.markdown("""
     /* ---- Hide Streamlit default UI clutter ---- */
     #MainMenu { visibility: hidden; }
     header[data-testid="stHeader"] { display: none; }
-    [data-testid="collapsedControl"] { display: none; }
     footer { visibility: hidden; }
+
+    /* ---- Show sidebar toggle but style it cleanly ---- */
+    [data-testid="collapsedControl"] {
+        display: flex !important;
+        top: 0.5rem !important;
+        left: 0.5rem !important;
+    }
 
     /* ---- Remove gap left by hidden header ---- */
     .stApp { margin-top: 0 !important; }
@@ -45,8 +51,8 @@ st.markdown("""
 
     /* ---- Sidebar ---- */
     [data-testid="stSidebar"] {
-        min-width: 180px !important;
-        max-width: 220px !important;
+        min-width: 200px !important;
+        max-width: 240px !important;
     }
 
     /* ---- Buttons: always full width and big enough to tap on mobile ---- */
