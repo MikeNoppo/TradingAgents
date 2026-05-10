@@ -6,8 +6,9 @@ import websockets
 import json
 import os
 import requests
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
-from streamlit_cookies_controller import CookieController
+import extra_streamlit_components as stx
 
 load_dotenv()
 
@@ -39,7 +40,23 @@ st.markdown("""
         position: fixed !important;
         top: 0.4rem !important;
         left: 0.4rem !important;
-        z-index: 999 !important;
+        z-index: 999999 !important;
+        background: rgba(38, 39, 48, 0.85);
+        border-radius: 6px;
+        padding: 4px;
+    }
+
+    /* ---- Force main content to expand when sidebar collapsed ---- */
+    section.main, [data-testid="stMain"] {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+    [data-testid="stAppViewContainer"] > .main {
+        margin-left: 0 !important;
+    }
+    .main .block-container {
+        max-width: 100% !important;
     }
 
     /* ---- Remove gap left by hidden header ---- */
@@ -140,13 +157,19 @@ if not CORRECT_PASSWORD or CORRECT_PASSWORD in {"admin", "admin123", "password",
 # Cookie-based session — derive a stable token from the password
 SESSION_TOKEN = hashlib.sha256(f"ta_session_{CORRECT_PASSWORD}".encode()).hexdigest()
 COOKIE_NAME = "ta_session"
-COOKIE_MAX_AGE = 7 * 24 * 3600  # 7 days
 
-cookie = CookieController()
+
+@st.cache_resource
+def get_cookie_manager():
+    return stx.CookieManager(key="ta_cookie_mgr")
+
+
+cookie_manager = get_cookie_manager()
+# IMPORTANT: must call get_all() once to populate the cookie cache
+all_cookies = cookie_manager.get_all(key="ta_get_all")
 
 if "authenticated" not in st.session_state:
-    # Check cookie first
-    cookie_val = cookie.get(COOKIE_NAME)
+    cookie_val = all_cookies.get(COOKIE_NAME) if all_cookies else None
     st.session_state.authenticated = (cookie_val == SESSION_TOKEN)
 
 if not st.session_state.authenticated:
@@ -157,7 +180,12 @@ if not st.session_state.authenticated:
         if st.button("Login", use_container_width=True):
             if pwd == CORRECT_PASSWORD:
                 st.session_state.authenticated = True
-                cookie.set(COOKIE_NAME, SESSION_TOKEN, max_age=COOKIE_MAX_AGE)
+                cookie_manager.set(
+                    COOKIE_NAME,
+                    SESSION_TOKEN,
+                    expires_at=datetime.now() + timedelta(days=7),
+                    key="ta_cookie_set",
+                )
                 st.rerun()
             else:
                 st.error("Incorrect password")
@@ -225,11 +253,11 @@ def _render_result(container, content):
 with st.sidebar:
     st.markdown("## 📈 TradingAgents")
     st.markdown("---")
-    menu = st.radio("", ["🔍 Run Analysis", "📂 File Manager"], label_visibility="collapsed")
+    menu = st.radio("Navigation", ["🔍 Run Analysis", "📂 File Manager"], label_visibility="collapsed")
     st.markdown("---")
     if st.button("Logout", use_container_width=True):
         st.session_state.authenticated = False
-        cookie.remove(COOKIE_NAME)
+        cookie_manager.delete(COOKIE_NAME, key="ta_cookie_del")
         st.rerun()
 
 # ============================================================
