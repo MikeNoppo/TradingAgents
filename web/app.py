@@ -32,30 +32,32 @@ st.markdown("""
     header[data-testid="stHeader"] { display: none; }
     footer { visibility: hidden; }
 
-    /* ---- Show sidebar toggle button ---- */
-    [data-testid="collapsedControl"] {
+    /* ---- Sidebar collapse/expand toggle button (always visible) ---- */
+    [data-testid="collapsedControl"],
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarCollapsedControl"],
+    button[kind="header"][aria-label*="sidebar" i],
+    button[aria-label*="sidebar" i] {
         display: flex !important;
         visibility: visible !important;
         opacity: 1 !important;
-        position: fixed !important;
-        top: 0.4rem !important;
-        left: 0.4rem !important;
         z-index: 999999 !important;
-        background: rgba(38, 39, 48, 0.85);
-        border-radius: 6px;
-        padding: 4px;
+        background: rgba(38, 39, 48, 0.85) !important;
+        border-radius: 6px !important;
+        padding: 4px !important;
+        color: #fafafa !important;
     }
 
-    /* ---- Force main content to expand when sidebar collapsed ---- */
-    section.main, [data-testid="stMain"] {
-        margin-left: 0 !important;
-        width: 100% !important;
-        max-width: 100% !important;
+    /* When sidebar is fully collapsed, pin a floating expand button at top-left */
+    [data-testid="collapsedControl"] {
+        position: fixed !important;
+        top: 0.5rem !important;
+        left: 0.5rem !important;
     }
-    [data-testid="stAppViewContainer"] > .main {
-        margin-left: 0 !important;
-    }
-    .main .block-container {
+
+    /* ---- Main content: let it reflow naturally with sidebar ---- */
+    .main .block-container,
+    [data-testid="stMain"] .block-container {
         max-width: 100% !important;
     }
 
