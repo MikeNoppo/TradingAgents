@@ -30,6 +30,11 @@ st.markdown("""
     [data-testid="collapsedControl"] { display: none; }
     footer { visibility: hidden; }
 
+    /* ---- Remove gap left by hidden header ---- */
+    .stApp { margin-top: 0 !important; }
+    [data-testid="stSidebarContent"] { padding-top: 1rem !important; }
+    section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
+
     /* ---- Global ---- */
     .block-container {
         padding-top: 1rem;
