@@ -31,11 +31,15 @@ st.markdown("""
     header[data-testid="stHeader"] { display: none; }
     footer { visibility: hidden; }
 
-    /* ---- Show sidebar toggle but style it cleanly ---- */
+    /* ---- Show sidebar toggle button ---- */
     [data-testid="collapsedControl"] {
         display: flex !important;
-        top: 0.5rem !important;
-        left: 0.5rem !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: fixed !important;
+        top: 0.4rem !important;
+        left: 0.4rem !important;
+        z-index: 999 !important;
     }
 
     /* ---- Remove gap left by hidden header ---- */
@@ -240,18 +244,40 @@ if menu == "🔍 Run Analysis":
         ticker = st.text_input("Ticker Symbol", value="AAPL", placeholder="e.g. NVDA, BTC-USD")
         date = st.date_input("Analysis Date")
 
-        MODELS = {
-            "openai":    ["o4-mini", "o3-mini", "gpt-4.1", "gpt-4o", "gpt-4o-mini"],
-            "anthropic": ["claude-opus-4-5", "claude-sonnet-4-5", "claude-haiku-3-5"],
-            "google":    ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
-            "deepseek":  ["deepseek-reasoner", "deepseek-chat"],
-            "ollama":    ["llama3.3", "qwen2.5:72b", "deepseek-r1:70b"],
+        DEEP_MODELS = {
+            "openai":      ["gpt-5.4", "gpt-5.2", "gpt-5.4-mini", "gpt-5.4-pro"],
+            "anthropic":   ["claude-opus-4-6", "claude-opus-4-5", "claude-sonnet-4-6", "claude-sonnet-4-5"],
+            "google":      ["gemini-3.1-pro-preview", "gemini-3-flash-preview", "gemini-2.5-pro", "gemini-2.5-flash"],
+            "xai":         ["grok-4-0709", "grok-4-1-fast-reasoning", "grok-4-fast-reasoning", "grok-4-1-fast-non-reasoning"],
+            "deepseek":    ["deepseek-v4-pro", "deepseek-reasoner", "deepseek-chat"],
+            "qwen":        ["qwen3.6-plus", "qwen3.5-plus", "qwen3-max"],
+            "glm":         ["glm-5.1", "glm-5"],
+            "ollama":      ["glm-4.7-flash:latest", "gpt-oss:latest", "qwen3:latest"],
+            "openrouter":  [],  # dynamic — user types custom
+        }
+        QUICK_MODELS = {
+            "openai":      ["gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.4", "gpt-4.1"],
+            "anthropic":   ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-sonnet-4-5"],
+            "google":      ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-3.1-flash-lite-preview", "gemini-2.5-flash-lite"],
+            "xai":         ["grok-4-1-fast-non-reasoning", "grok-4-fast-non-reasoning", "grok-4-1-fast-reasoning"],
+            "deepseek":    ["deepseek-v4-flash", "deepseek-chat"],
+            "qwen":        ["qwen3.5-flash", "qwen-plus"],
+            "glm":         ["glm-4.7", "glm-5"],
+            "ollama":      ["qwen3:latest", "gpt-oss:latest", "glm-4.7-flash:latest"],
+            "openrouter":  [],  # dynamic — user types custom
         }
 
-        provider = st.selectbox("LLM Provider", list(MODELS.keys()))
-        model_options = MODELS[provider]
-        deep_think = st.selectbox("Deep Think Model", model_options, index=0)
-        quick_think = st.selectbox("Quick Think Model", model_options, index=0)
+        provider = st.selectbox("LLM Provider", list(DEEP_MODELS.keys()))
+
+        deep_opts = DEEP_MODELS[provider]
+        quick_opts = QUICK_MODELS[provider]
+
+        if provider == "openrouter":
+            deep_think = st.text_input("Deep Think Model (OpenRouter model ID)", placeholder="e.g. meta-llama/llama-3.3-70b-instruct")
+            quick_think = st.text_input("Quick Think Model (OpenRouter model ID)", placeholder="e.g. google/gemini-flash-1.5")
+        else:
+            deep_think = st.selectbox("Deep Think Model", deep_opts, index=0)
+            quick_think = st.selectbox("Quick Think Model", quick_opts, index=0)
         rounds = st.slider("Debate Rounds", min_value=1, max_value=5, value=1)
 
         st.markdown("")  # spacer
