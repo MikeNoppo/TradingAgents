@@ -13,7 +13,7 @@ st.set_page_config(
     page_title="TradingAgents",
     page_icon="📈",
     layout="wide",
-    initial_sidebar_state="collapsed",  # Start collapsed on mobile
+    initial_sidebar_state="expanded",
 )
 
 # --- API base URL (configurable via .env for when running on VPS) ---
@@ -24,6 +24,12 @@ WS_BASE_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss:
 # --- Responsive CSS ---
 st.markdown("""
 <style>
+    /* ---- Hide Streamlit default UI clutter ---- */
+    #MainMenu { visibility: hidden; }
+    header[data-testid="stHeader"] { display: none; }
+    [data-testid="collapsedControl"] { display: none; }
+    footer { visibility: hidden; }
+
     /* ---- Global ---- */
     .block-container {
         padding-top: 1rem;
