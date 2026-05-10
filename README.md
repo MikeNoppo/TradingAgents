@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/TauricResearch.png" style="width: 60%; height: auto;">
+  <img alt="Tauric Research Logo" src="assets/TauricResearch.png" style="width: 60%; height: auto;">
 </p>
 
 <div align="center" style="line-height: 1;">
@@ -13,13 +13,13 @@
 
 <div align="center">
   <!-- Keep these links. Translations will automatically update with the README. -->
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=de">Deutsch</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=es">Español</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=fr">français</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ja">日本語</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ko">한국어</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=pt">Português</a> | 
-  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ru">Русский</a> | 
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=de">Deutsch</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=es">Español</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=fr">français</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ja">日本語</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ko">한국어</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=pt">Português</a> |
+  <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=ru">Русский</a> |
   <a href="https://www.readme-i18n.com/TauricResearch/TradingAgents?lang=zh">中文</a>
 </div>
 
@@ -59,7 +59,7 @@
 TradingAgents is a multi-agent trading framework that mirrors the dynamics of real-world trading firms. By deploying specialized LLM-powered agents: from fundamental analysts, sentiment experts, and technical analysts, to trader, risk management team, the platform collaboratively evaluates market conditions and informs trading decisions. Moreover, these agents engage in dynamic discussions to pinpoint the optimal strategy.
 
 <p align="center">
-  <img src="assets/schema.png" style="width: 100%; height: auto;">
+  <img alt="Schema" src="assets/schema.png" style="width: 100%; height: auto;">
 </p>
 
 > TradingAgents framework is designed for research purposes. Trading performance may vary based on many factors, including the chosen backbone language models, model temperature, trading periods, the quality of data, and other non-deterministic factors. [It is not intended as financial, investment, or trading advice.](https://tauric.ai/disclaimer/)
@@ -73,21 +73,21 @@ Our framework decomposes complex trading tasks into specialized roles. This ensu
 - Technical Analyst: Utilizes technical indicators (like MACD and RSI) to detect trading patterns and forecast price movements.
 
 <p align="center">
-  <img src="assets/analyst.png" width="100%" style="display: inline-block; margin: 0 2%;">
+  <img alt="Analyst Team" src="assets/analyst.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 ### Researcher Team
 - Comprises both bullish and bearish researchers who critically assess the insights provided by the Analyst Team. Through structured debates, they balance potential gains against inherent risks.
 
 <p align="center">
-  <img src="assets/researcher.png" width="70%" style="display: inline-block; margin: 0 2%;">
+  <img alt="Researcher Team" src="assets/researcher.png" width="70%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 ### Trader Agent
 - Composes reports from the analysts and researchers to make informed trading decisions. It determines the timing and magnitude of trades based on comprehensive market insights.
 
 <p align="center">
-  <img src="assets/trader.png" width="70%" style="display: inline-block; margin: 0 2%;">
+  <img alt="Trader Agent" src="assets/trader.png" width="70%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 ### Risk Management and Portfolio Manager
@@ -95,7 +95,7 @@ Our framework decomposes complex trading tasks into specialized roles. This ensu
 - The Portfolio Manager approves/rejects the transaction proposal. If approved, the order will be sent to the simulated exchange and executed.
 
 <p align="center">
-  <img src="assets/risk.png" width="70%" style="display: inline-block; margin: 0 2%;">
+  <img alt="Risk Management" src="assets/risk.png" width="70%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 ## Installation and CLI
@@ -124,13 +124,13 @@ pip install .
 Alternatively, run with Docker:
 ```bash
 cp .env.example .env  # add your API keys
-docker compose run --rm tradingagents
+docker compose run --rm tradingagents-cli
 ```
 
 For local models with Ollama:
-```bash
+`````bash
 docker compose --profile ollama run --rm tradingagents-ollama
-```
+`````
 
 ### Required APIs
 
@@ -167,17 +167,17 @@ python -m cli.main     # alternative: run directly from source
 You will see a screen where you can select your desired tickers, analysis date, LLM provider, research depth, and more.
 
 <p align="center">
-  <img src="assets/cli/cli_init.png" width="100%" style="display: inline-block; margin: 0 2%;">
+  <img alt="CLI Init" src="assets/cli/cli_init.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 An interface will appear showing results as they load, letting you track the agent's progress as it runs.
 
 <p align="center">
-  <img src="assets/cli/cli_news.png" width="100%" style="display: inline-block; margin: 0 2%;">
+  <img alt="CLI News" src="assets/cli/cli_news.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 <p align="center">
-  <img src="assets/cli/cli_transaction.png" width="100%" style="display: inline-block; margin: 0 2%;">
+  <img alt="CLI Transaction" src="assets/cli/cli_transaction.png" width="100%" style="display: inline-block; margin: 0 2%;">
 </p>
 
 ## TradingAgents Package
@@ -254,11 +254,55 @@ We welcome contributions from the community! Whether it's fixing a bug, improvin
 
 Past contributions, including code, design feedback, and bug reports, are credited per release in [`CHANGELOG.md`](CHANGELOG.md).
 
+
+## Web UI & API (New!)
+
+The framework now includes a modern Web UI (Streamlit) and an API backend (FastAPI + WebSockets) for real-time remote access. This allows you to host the trading agent and access it from any browser, complete with real-time logs and password protection.
+
+### Configuration
+
+Add your password to your .env file to protect the Web UI:
+```bash
+WEB_PASSWORD=your_secure_password
+# Optional: set a separate token used by Streamlit to call the private API.
+API_AUTH_TOKEN=your_secure_api_token
+```
+
+`WEB_PASSWORD` is required for hosted deployments. The API uses `API_AUTH_TOKEN` when set, otherwise it falls back to `WEB_PASSWORD`.
+
+### Running Locally
+
+```bash
+# Terminal 1: Start the API
+uvicorn api.main:app --reload
+
+# Terminal 2: Start the Web UI
+streamlit run web/app.py
+```
+*The UI will be available at http://localhost:8501*
+
+### Running via Docker (Recommended for Hosting)
+
+Run both the API and Web UI simultaneously:
+```bash
+docker compose up --build tradingagents-api tradingagents-web
+```
+
+If you still want to run the original interactive CLI via Docker:
+```bash
+docker compose run --rm tradingagents-cli
+```
+
+For local models with Ollama (CLI mode):
+```bash
+docker compose --profile ollama run --rm tradingagents-ollama
+```
+
 ## Citation
 
 Please reference our work if you find *TradingAgents* provides you with some help :)
 
-```
+```bibtex
 @misc{xiao2025tradingagentsmultiagentsllmfinancial,
       title={TradingAgents: Multi-Agents LLM Financial Trading Framework}, 
       author={Yijia Xiao and Edward Sun and Di Luo and Wei Wang},

@@ -20,8 +20,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN useradd --create-home appuser
 USER appuser
-WORKDIR /home/appuser/app
+WORKDIR /app
 
-COPY --from=builder --chown=appuser:appuser /build .
+COPY --from=builder --chown=appuser:appuser /build /app
 
-ENTRYPOINT ["tradingagents"]
+# Removed fixed ENTRYPOINT so docker-compose `command` works
+# ENTRYPOINT ["tradingagents"]
