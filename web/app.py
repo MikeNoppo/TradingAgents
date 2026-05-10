@@ -159,12 +159,7 @@ SESSION_TOKEN = hashlib.sha256(f"ta_session_{CORRECT_PASSWORD}".encode()).hexdig
 COOKIE_NAME = "ta_session"
 
 
-@st.cache_resource
-def get_cookie_manager():
-    return stx.CookieManager(key="ta_cookie_mgr")
-
-
-cookie_manager = get_cookie_manager()
+cookie_manager = stx.CookieManager(key="ta_cookie_mgr")
 # IMPORTANT: must call get_all() once to populate the cookie cache
 all_cookies = cookie_manager.get_all(key="ta_get_all")
 
