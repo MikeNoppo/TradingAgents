@@ -1,11 +1,13 @@
 import streamlit as st
 import asyncio
+import hashlib
 import html
 import websockets
 import json
 import os
 import requests
 from dotenv import load_dotenv
+from streamlit_cookies_controller import CookieController
 
 load_dotenv()
 
@@ -131,11 +133,19 @@ if not CORRECT_PASSWORD or CORRECT_PASSWORD in {"admin", "admin123", "password",
     st.error("Set a strong WEB_PASSWORD environment variable before using the web UI.")
     st.stop()
 
+# Cookie-based session — derive a stable token from the password
+SESSION_TOKEN = hashlib.sha256(f"ta_session_{CORRECT_PASSWORD}".encode()).hexdigest()
+COOKIE_NAME = "ta_session"
+COOKIE_MAX_AGE = 7 * 24 * 3600  # 7 days
+
+cookie = CookieController()
+
 if "authenticated" not in st.session_state:
-    st.session_state.authenticated = False
+    # Check cookie first
+    cookie_val = cookie.get(COOKIE_NAME)
+    st.session_state.authenticated = (cookie_val == SESSION_TOKEN)
 
 if not st.session_state.authenticated:
-    # Centered login on mobile
     col_l, col_center, col_r = st.columns([1, 2, 1])
     with col_center:
         st.markdown("## 🔒 TradingAgents Login")
@@ -143,6 +153,7 @@ if not st.session_state.authenticated:
         if st.button("Login", use_container_width=True):
             if pwd == CORRECT_PASSWORD:
                 st.session_state.authenticated = True
+                cookie.set(COOKIE_NAME, SESSION_TOKEN, max_age=COOKIE_MAX_AGE)
                 st.rerun()
             else:
                 st.error("Incorrect password")
@@ -214,6 +225,7 @@ with st.sidebar:
     st.markdown("---")
     if st.button("Logout", use_container_width=True):
         st.session_state.authenticated = False
+        cookie.remove(COOKIE_NAME)
         st.rerun()
 
 # ============================================================
