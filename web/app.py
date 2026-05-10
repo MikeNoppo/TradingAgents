@@ -222,12 +222,18 @@ if menu == "🔍 Run Analysis":
         ticker = st.text_input("Ticker Symbol", value="AAPL", placeholder="e.g. NVDA, BTC-USD")
         date = st.date_input("Analysis Date")
 
-        provider = st.selectbox(
-            "LLM Provider",
-            ["openai", "anthropic", "google", "deepseek", "ollama"],
-        )
-        deep_think = st.text_input("Deep Think Model", value="gpt-5.4-mini")
-        quick_think = st.text_input("Quick Think Model", value="gpt-5.4-mini")
+        MODELS = {
+            "openai":    ["o4-mini", "o3-mini", "gpt-4.1", "gpt-4o", "gpt-4o-mini"],
+            "anthropic": ["claude-opus-4-5", "claude-sonnet-4-5", "claude-haiku-3-5"],
+            "google":    ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-pro"],
+            "deepseek":  ["deepseek-reasoner", "deepseek-chat"],
+            "ollama":    ["llama3.3", "qwen2.5:72b", "deepseek-r1:70b"],
+        }
+
+        provider = st.selectbox("LLM Provider", list(MODELS.keys()))
+        model_options = MODELS[provider]
+        deep_think = st.selectbox("Deep Think Model", model_options, index=0)
+        quick_think = st.selectbox("Quick Think Model", model_options, index=0)
         rounds = st.slider("Debate Rounds", min_value=1, max_value=5, value=1)
 
         st.markdown("")  # spacer
