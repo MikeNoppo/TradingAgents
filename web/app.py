@@ -27,54 +27,38 @@ WS_BASE_URL = API_BASE_URL.replace("http://", "ws://").replace("https://", "wss:
 # --- Responsive CSS ---
 st.markdown("""
 <style>
-    /* ---- Hide Streamlit default UI clutter ----
-       NOTE: We keep stHeader visible (just transparent) because on mobile the
-       sidebar hamburger toggle lives INSIDE stHeader. Hiding the header would
-       remove the only way to open the sidebar on phones. */
+    /* ---- Hide Streamlit chrome but KEEP the header so the sidebar toggle
+       (hamburger / collapse arrow) remains visible and clickable on every
+       viewport. We only hide the right-side toolbar (Deploy menu, etc.) and
+       the colorful decoration line. The header itself stays at its native
+       height so Streamlit can position the toggle button properly. */
     #MainMenu { visibility: hidden; }
-    header[data-testid="stHeader"] {
-        background: transparent !important;
-        height: 0 !important;
-    }
-    /* Re-show the toolbar/decoration that lives inside header so the toggle
-       remains clickable, but hide the deploy/menu chrome on the right. */
-    header[data-testid="stHeader"] [data-testid="stToolbar"] { display: none !important; }
-    header[data-testid="stHeader"] [data-testid="stDecoration"] { display: none !important; }
+    [data-testid="stToolbar"] { display: none !important; }
+    [data-testid="stDecoration"] { display: none !important; }
     footer { visibility: hidden; }
 
-    /* ---- Sidebar collapse/expand toggle button (always visible) ---- */
+    /* Make the header transparent so it blends with the page background but
+       still occupies space for the toggle button. */
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+    }
+
+    /* ---- Sidebar toggle button: ensure it's never hidden by any earlier
+       Streamlit version selector. We do NOT reposition it — let Streamlit
+       place it inside the header where it belongs. */
     [data-testid="collapsedControl"],
     [data-testid="stSidebarCollapseButton"],
     [data-testid="stSidebarCollapsedControl"],
-    button[kind="header"][aria-label*="sidebar" i],
-    button[aria-label*="sidebar" i] {
-        display: flex !important;
+    button[kind="header"] {
         visibility: visible !important;
         opacity: 1 !important;
-        z-index: 999999 !important;
-        background: rgba(38, 39, 48, 0.85) !important;
-        border-radius: 6px !important;
-        padding: 4px !important;
-        color: #fafafa !important;
     }
 
-    /* When sidebar is fully collapsed, pin a floating expand button at top-left */
-    [data-testid="collapsedControl"] {
-        position: fixed !important;
-        top: 0.5rem !important;
-        left: 0.5rem !important;
-    }
-
-    /* ---- Main content: let it reflow naturally with sidebar ---- */
-    .main .block-container,
-    [data-testid="stMain"] .block-container {
-        max-width: 100% !important;
-    }
-
-    /* ---- Remove gap left by hidden header ---- */
-    .stApp { margin-top: 0 !important; }
-    [data-testid="stSidebarContent"] { padding-top: 1rem !important; }
-    section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
+    /* ---- Main content: do NOT force any width/margin overrides. Let
+       Streamlit's native flex layout reflow the body when the sidebar
+       opens/closes. We only widen the inner block-container to use the
+       available space (Streamlit caps it at 736px by default in centered
+       mode, but layout="wide" already takes care of that). */
 
     /* ---- Global ---- */
     .block-container {
@@ -172,28 +156,11 @@ COOKIE_NAME = "ta_session"
 
 
 cookie_manager = stx.CookieManager(key="ta_cookie_mgr")
-# IMPORTANT: get_all() must be called once per run to populate the cookie cache,
-# but on the FIRST render after a hard refresh the JS component hasn't sent
-# cookies back yet — it returns {} and we'd wrongly think the user is logged out.
-# Workaround: if we get an empty dict on first render, force one extra rerun so
-# the component has a chance to deliver cookies before we make the auth decision.
-all_cookies = cookie_manager.get_all(key="ta_get_all") or {}
-
-if "_cookie_ready" not in st.session_state:
-    st.session_state._cookie_ready = False
-
-# If cookies are present we're definitely ready. If empty, give the component
-# one rerun cycle to settle (only once, to avoid infinite reload loops).
-if all_cookies:
-    st.session_state._cookie_ready = True
-elif not st.session_state._cookie_ready:
-    st.session_state._cookie_ready = True  # mark so we only retry once
-    import time
-    time.sleep(0.25)
-    st.rerun()
+# IMPORTANT: must call get_all() once to populate the cookie cache
+all_cookies = cookie_manager.get_all(key="ta_get_all")
 
 if "authenticated" not in st.session_state:
-    cookie_val = all_cookies.get(COOKIE_NAME)
+    cookie_val = all_cookies.get(COOKIE_NAME) if all_cookies else None
     st.session_state.authenticated = (cookie_val == SESSION_TOKEN)
 
 if not st.session_state.authenticated:
